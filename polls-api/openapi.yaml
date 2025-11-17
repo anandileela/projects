@@ -1,0 +1,95 @@
+openapi: 3.0.3
+info:
+  title: Polls API (Demo)
+  version: "0.1.0"
+  description: A tiny API for creating polls, voting, and retrieving results.
+servers:
+  - url: https://polls-759kinksm-anandi-knuppels-projects.vercel.app
+paths:
+  /api/createPoll:
+    post:
+      summary: Create a poll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPoll'
+      responses:
+        '201':
+          description: Created poll
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollWithOptions'
+  /api/getPoll:
+    get:
+      summary: Get poll by id
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Poll with options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollWithOptions'
+  /api/vote:
+    post:
+      summary: Vote in a poll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pollId:
+                  type: string
+                optionId:
+                  type: string
+                voterIdentifier:
+                  type: string
+      responses:
+        '204':
+          description: Vote accepted
+        '409':
+          description: Already voted
+components:
+  schemas:
+    NewPoll:
+      type: object
+      required:
+        - question
+        - options
+      properties:
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+    PollWithOptions:
+      type: object
+      properties:
+        id:
+          type: string
+        question:
+          type: string
+        created_at:
+          type: string
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+              votes:
+                type: integer
